@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<!-- Carregar jQuery e Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+<br><br>
+<div class="summary">
+    <div id="entrada" class="total-entrada">
+        Entrada: <i class="bi bi-arrow-up-circle text-success"></i> R$ {{ total_entrada }}
+    </div>
+    <div id="saida" class="total-saida">
+        Saída: <i class="bi bi-arrow-down-circle text-danger"></i> R$ {{ total_saida }}
+    </div>
+    <div id="saldo" class="total-saldo {% if saldo >= 0 %}positivo{% else %}negativo{% endif %}">
+        Saldo: 
+        {% if saldo > 1000 %}
+            🤑 <!-- Rosto com cifrões (saldo muito positivo) -->
+        {% elif saldo >= 0 %}
+            💰 <!-- Saco de dinheiro (saldo positivo moderado) -->
+        {% elif saldo > -500 %}
+            🥲 <!-- Rosto com lágrima (saldo levemente negativo) -->
+        {% else %}
+            💸 <!-- Dinheiro voando (saldo muito negativo) -->
+        {% endif %}
+        R$ {{ saldo }}
+    </div>
+    
+</div>
+
+
+<!-- Botão para abrir o modal de adicionar despesa -->
+<div class="button-container">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+        <i class="bi bi-plus-lg"></i> 
+    </button>
+</div>
+
+<br><br>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th></th> <!-- Coluna para as setas -->
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr class="{{ 'table-entry' if expense.type == 'entrada' else 'table-expense' }}">
+                <td>
+                    {% if expense.type == 'entrada' %}
+                    <i class="bi bi-arrow-up-circle text-success" title="Entrada"></i>
+                    {% else %}
+                    <i class="bi bi-arrow-down-circle text-danger" title="Saída"></i>
+                    {% endif %}
+                </td>
+                <td>{{ expense.description }}</td>
+                <td>{{ expense.category }}</td>
+                <td>R$ {{ expense.value }}</td>
+                <td>{{ expense.date.strftime('%d/%m/%Y') }}</td>
+                <td>{{ expense.type }}</td>
+                <td>
+                    <a href="{{ url_for('edit_expense', expense_id=expense.id) }}" class="btn btn-warning" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ url_for('delete_expense', expense_id=expense.id) }}" class="btn btn-danger" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
+                        <i class="bi bi-x"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<br><br>
+
+
+<div class="chart-wrapper" style="background-color: white; padding: 20px; border-radius: 10px;">
+    <div class="chart-container" style="width: 50%; margin: 0 auto;">
+        <canvas id="categoryChart" width="300" height="300"></canvas>
+    </div>
+</div>
+
+
+<script>
+    var ctx = document.getElementById('categoryChart').getContext('2d');
+    var values = {{ values | tojson }};
+    var labels = {{ labels | tojson }};
+    var totalValue = values.reduce(function(acc, value) {
+        return acc + value;
+    }, 0);
+    var percentages = values.map(function(value) {
+        return ((value / totalValue) * 100).toFixed(2);
+    });
+
+    var categoryChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Despesas por Categoria',
+                data: values,
+                backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#FF9133'],
+                borderColor: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var label = tooltipItem.label;
+                            var value = tooltipItem.raw;
+                            var percentage = percentages[tooltipItem.dataIndex];
+                            return label + ': R$ ' + value.toFixed(2) + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Modal para adicionar nova despesa -->
+<div class="modal fade" id="addExpenseModal" tabindex="-1" role="dialog" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addExpenseModalLabel">Adicionar Nova Despesa</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/add" method="POST" class="form-expense">
+                    <input type="text" name="description" placeholder="Descrição" required>
+                    <div class="category-container">
+                        <select name="category" required>
+                            <option value="">Selecione uma categoria</option>
+                            {% for category in categories %}
+                            <option value="{{ category.name }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                            Nova Categoria
+                        </button>
+                    </div>
+                    <input type="number" step="0.01" name="value" placeholder="Valor" required>
+                    <input type="date" name="date" required>
+                    <select name="type" required>
+                        <option value="">Selecione o tipo</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

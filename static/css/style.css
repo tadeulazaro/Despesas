@@ -1,0 +1,209 @@
+/* Estilo global */
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(120deg, #e3fcec 50%, #fde8e8 50%);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 750px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #cecece;
+    border-radius: 12px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.4s ease;
+}
+
+.container:hover {
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 15px;
+    font-size: 2.8rem;
+}
+
+h2 {
+    text-align: center;
+    color: #666666;
+    font-size: 1.3rem;
+    margin-bottom: 25px;
+}
+
+/* Resumo dos Totais */
+.summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    gap: 15px;
+}
+
+.summary div {
+    flex: 1;
+    padding: 10px;
+    font-size: 0.9rem; /* Tamanho menor */
+    text-align: center;
+    border-radius: 10px;
+    color: #7f8c8d; /* Texto padrão cinza */
+    font-weight: normal;
+    background-color: #f7f7f7;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.summary div span {
+    display: block;
+    font-size: 1.2rem; /* Destaque no valor */
+    font-weight: bold;
+}
+
+/* Estilo para Entrada */
+.total-entrada {
+    background-color: #e3f2fd; /* Azul claro */
+    color: #1565c0; /* Azul escuro */
+}
+
+/* Estilo para Saída */
+.total-saida {
+    background-color: #ffebee; /* Vermelho claro */
+    color: #b71c1c; /* Vermelho escuro */
+}
+
+/* Estilo para Saldo Positivo */
+.total-saldo.positivo {
+    background-color: #e8f5e9; /* Verde claro */
+    color: #388e3c; /* Verde escuro */
+}
+
+/* Estilo para Saldo Negativo */
+.total-saldo.negativo {
+    background-color: #ffebee; /* Vermelho claro */
+    color: #b71c1c; /* Vermelho escuro */
+}
+
+/* Efeito de hover */
+.summary div:hover {
+    transform: scale(1.05); /* Leve aumento no hover */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* Formulário */
+.form-expense {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.form-expense input,
+.form-expense select,
+.form-expense button {
+    flex: 1;
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+}
+
+.form-expense button {
+    flex: none;
+    background-color: #294fcc;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.form-expense button:hover {
+    background-color: #45a049;
+}
+
+/* Tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+table th {
+    background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #e9f7ef; /* Verde muito claro */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #fef2f2; /* Vermelho muito claro */
+}
+
+/* Efeito de hover na Tabela */
+table td:hover {
+    background-color: #f4f4f4;
+    cursor: pointer;
+}
+
+.btn-floating-top {
+    position: relative; /* Alterado de fixed para relative */
+    display: inline-block; /* Exibe como botão no fluxo da página */
+    margin: 10px; /* Ajuste de espaçamento */
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    border: none;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-floating-top:hover {
+    background-color: #0056b3;
+}
+
+
+.btn-floating-top:hover {
+    transform: scale(1.1);
+    background-color: #0b1994;
+}
+/* Entrada - Azul Claro */
+#entrada {
+    background-color: #e3f2fd; /* Azul claro */
+    color: #1565c0; /* Azul escuro */
+}
+
+/* Saída - Vermelho Claro */
+#saida {
+    background-color: #ffebee; /* Vermelho claro */
+    color: #b71c1c; /* Vermelho escuro */
+}
+
+/* Saldo Positivo - Verde Claro */
+#saldo.positivo {
+    background-color: #e8f5e9; /* Verde claro */
+    color: #388e3c; /* Verde escuro */
+}
+
+/* Saldo Negativo - Vermelho Claro */
+#saldo.negativo {
+    background-color: #ffebee; /* Vermelho claro */
+    color: #b71c1c; /* Vermelho escuro */
+}

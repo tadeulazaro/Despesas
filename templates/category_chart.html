@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="chart-container" style="width: 50%; margin: 0 auto;">
+    <canvas id="categoryChart" width="300" height="300"></canvas>
+</div>
+
+
+<script>
+    var ctx = document.getElementById('categoryChart').getContext('2d');
+    
+    var values = {{ values | tojson }};  // Dados das despesas por categoria
+    var labels = {{ labels | tojson }};  // Categorias
+
+    var totalValue = values.reduce(function(acc, value) {
+        return acc + value;
+    }, 0);
+
+    var percentages = values.map(function(value) {
+        return ((value / totalValue) * 100).toFixed(2);
+    });
+
+    var categoryChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Despesas por Categoria',
+                data: values,
+                backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#FF9133'],
+                borderColor: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            var label = tooltipItem.label;
+                            var value = tooltipItem.raw;
+                            var percentage = percentages[tooltipItem.dataIndex];
+                            return label + ': R$ ' + value.toFixed(2) + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+
+{% endblock %}

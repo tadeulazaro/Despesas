@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="summary">
+    <div class="total-entrada">Total Entrada: R$ {{ total_entrada }}</div>
+    <div class="total-saida">Total Saída: R$ {{ total_saida }}</div>
+    <div class="total-saldo {% if saldo >= 0 %}positivo{% else %}negativo{% endif %}">Saldo: R$ {{ saldo }}</div>
+</div>
+
+<!-- Canvas do gráfico -->
+<canvas id="categoryChart" width="400" height="400"></canvas>
+
+<script>
+    var ctx = document.getElementById('categoryChart').getContext('2d');
+    var categoryChart = new Chart(ctx, {
+        type: 'pie',  // Tipo de gráfico: pizza
+        data: {
+            labels: {{ labels|tojson|safe }},
+            datasets: [{
+                label: 'Despesas por Categoria',
+                data: {{ values|tojson|safe }},
+                backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#FF9133'],
+                borderColor: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': R$ ' + tooltipItem.raw.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
